@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flashcard with Flip Effect</title>
+<title>German Words FlashCards</title>
 <style>
     body, html {
         height: 100%;
@@ -234,42 +234,42 @@
     }
 
     function startTimer() {
-    clearInterval(timerInterval);
-    let timerDisplay = document.querySelector('.timer');
-    let seconds = 60; // 1 minute
-    timerInterval = setInterval(() => {
-        seconds--;
-        let minutes = Math.floor(seconds / 60);
-        let remainingSeconds = seconds % 60;
+        clearInterval(timerInterval);
+        let timerDisplay = document.querySelector('.timer');
+        let seconds = 60; // 1 minute
+        timerInterval = setInterval(() => {
+            seconds--;
+            let minutes = Math.floor(seconds / 60);
+            let remainingSeconds = seconds % 60;
 
-        timerDisplay.textContent = `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+            timerDisplay.textContent = `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
 
-        if (seconds <= 0) {
-            clearInterval(timerInterval);
-            nextCard(); // Move to the next card when the timer runs out
-            stopTimer(); // Reset the timer
-        }
-    }, 1000);
-}
+            if (seconds <= 0) {
+                clearInterval(timerInterval);
+                nextCard(); // Move to the next card when the timer runs out
+                startTimer(); // Start the timer again for the next card
+            }
+        }, 1000);
+    }
 
-function toggleLanguage() {
-    const toggleText = document.querySelector('.toggle-text');
-    isGermanToEnglish = !isGermanToEnglish;
-    toggleText.textContent = isGermanToEnglish ? 'German → English' : 'English → German';
-    showCard(currentCardIndex);
-}
+    function toggleLanguage() {
+        const toggleText = document.querySelector('.toggle-text');
+        isGermanToEnglish = !isGermanToEnglish;
+        toggleText.textContent = isGermanToEnglish ? 'German → English' : 'English → German';
+        showCard(currentCardIndex);
+    }
 
-function stopTimer() {
-    clearInterval(timerInterval);
-    let timerDisplay = document.querySelector('.timer');
-    timerDisplay.textContent = "1:00"; // Reset the timer display
-}
+    function stopTimer() {
+        clearInterval(timerInterval);
+        let timerDisplay = document.querySelector('.timer');
+        timerDisplay.textContent = "1:00"; // Reset the timer display
+    }
 
-// Load initial data (Words level)
-loadData('words.json', document.getElementById('level1'));
+    // Load initial data (Words level)
+    loadData('words.json', document.getElementById('level1'));
 
-// Apply clicked effect on the default (Words) level button
-document.getElementById('level1').click();
+    // Apply clicked effect on the default (Words) level button
+    document.getElementById('level1').click();
 </script>
 
 </body>
