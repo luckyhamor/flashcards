@@ -1,14 +1,14 @@
 [
     {
-        "question": "What is a FHISG?",
-        "answer": "Animal ka"
+        "question": "This is a sample for phrase1?",
+        "answer": "Phrase1"
     },
     {
-        "question": "What is a Pig?",
-        "answer": "Baboy"
+        "question": "This is a sample for phrase2?",
+        "answer": "Phrase2"
     },
     {
-        "question": "Aileen?",
-        "answer": "Cute"
+        "question": "This is a sample for phrase3?",
+        "answer": "Phrase3"
     }
 ]
