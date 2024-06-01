@@ -1,14 +1,14 @@
 [
     {
-        "question": "This is a sample for phrase1?",
-        "answer": "Phrase1"
+        "question": "This is a sample for sentence1?",
+        "answer": "sentence1"
     },
     {
-        "question": "This is a sample for phrase2?",
-        "answer": "Phrase2"
+        "question": "This is a sample for sentence2?",
+        "answer": "sentence2"
     },
     {
-        "question": "This is a sample for phrase3?",
-        "answer": "Phrase3"
+        "question": "This is a sample for sentence3?",
+        "answer": "sentence3"
     }
 ]
