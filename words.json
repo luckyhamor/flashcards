@@ -1,10 +1,10 @@
 [
     {
-        "question": "What is a dog",
-        "answer": "Answer 1"
+        "question": "What is a dog?",
+        "answer": "Animal ka"
     },
     {
         "question": "What is a Pig?",
-        "answer": "Answer 2"
+        "answer": "Baboy"
     }
 ]
