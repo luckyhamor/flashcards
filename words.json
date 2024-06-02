@@ -563,5 +563,6 @@
     { "question": "der Mülleimer", "answer": "Trash can" },
     { "question": "die Spülbürste", "answer": "Dish brush" },
     { "question": "das Spültuch", "answer": "Dishcloth" },
-    { "question": "das Spülmittel", "answer": "Dish soap" }
+    { "question": "das Spülmittel", "answer": "Dish soap" },
+    { "question": "der Schlüssel", "answer": "Key" }
 ]
