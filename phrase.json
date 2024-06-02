@@ -51,5 +51,15 @@
     { "question": "Kann ich einen Tisch reservieren?", "answer": "Can I make a reservation?" },
     { "question": "Entschuldigung, ich spreche kein Deutsch.", "answer": "Excuse me, I don't speak German." },
     { "question": "Können Sie das bitte in Englisch sagen?", "answer": "Can you please say that in English?" },
-    { "question": "Darf ich ein Foto machen?", "answer": "Can I take a photo?" }
+    { "question": "Darf ich ein Foto machen?", "answer": "Can I take a photo?" },
+    { "question": "Wie weit ist es bis zum nächsten Bahnhof?", "answer": "How far is it to the nearest train station?" },
+    { "question": "Was ist deine Lieblingsmusik?", "answer": "What is your favorite music?" },
+    { "question": "Kannst du mir sagen, wo ich Geld wechseln kann?", "answer": "Can you tell me where I can exchange money?" },
+    { "question": "Hast du schon gegessen?", "answer": "Have you eaten already?" },
+    { "question": "Entschuldigung, darf ich vorbeikommen?", "answer": "Excuse me, may I pass?" },
+    { "question": "Kannst du mir das bitte zeigen?", "answer": "Can you please show me that?" },
+    { "question": "Gibt es hier WLAN?", "answer": "Is there Wi-Fi here?" },
+    { "question": "Kannst du mir sagen, wie ich zum Flughafen komme?", "answer": "Can you tell me how to get to the airport?" },
+    { "question": "Wann schließt das Geschäft?", "answer": "When does the store close?" },
+    { "question": "Kannst du mir den Weg zur nächsten Bushaltestelle zeigen?", "answer": "Can you show me the way to the nearest bus stop?" }
 ]
