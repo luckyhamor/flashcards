@@ -1,65 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Speech from 'expo-speech';
 
 const FlashcardApp = () => {
   const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isGermanToEnglish, setIsGermanToEnglish] = useState(true);
-  const [timer, setTimer] = useState(20); // Change timer to 20 seconds
+  const [timer, setTimer] = useState(60);
   const [intervalId, setIntervalId] = useState(null); // Added state for interval ID
   const [isNextBtnHeight, setIsNextBtnHeight] = useState(false); // Added state for next button height
 
-  // Fetch data function with caching
+  // Fetch data function
   const fetchData = async (file) => {
     try {
-      const cachedData = await getCachedData(file);
-      if (cachedData) {
-        setData(cachedData);
-        shuffleData(cachedData);
-        setCurrentCardIndex(0);
-        startTimer();
-      } else {
-        const response = await fetch(`https://raw.githubusercontent.com/luckyhamor/flashcards/main/${file}`);
-        if (!response.ok) {
-          throw new Error('Network response was not ok.');
-        }
-        const jsonData = await response.text();
-        // Log the JSON data to see if there's any unexpected character
-        console.log(jsonData);
-        const parsedData = JSON.parse(jsonData);
-        setData(parsedData);
-        shuffleData(parsedData);
-        setCurrentCardIndex(0);
-        startTimer();
-        // Cache fetched data
-        cacheData(file, parsedData);
-      }
+      const response = await fetch(`https://raw.githubusercontent.com/luckyhamor/flashcards/main/${file}`);
+      const jsonData = await response.json();
+      setData(jsonData);
+      setCurrentCardIndex(0);
+      shuffleData();
+      startTimer();
     } catch (error) {
       console.error('Error fetching data:', error);
-    }
-  };
-  
-
-  // Get cached data from local storage
-  const getCachedData = async (file) => {
-    try {
-      const cachedData = await AsyncStorage.getItem(file);
-      return JSON.parse(cachedData);
-    } catch (error) {
-      console.error('Error getting cached data:', error);
-      return null;
-    }
-  };
-
-  // Cache data to local storage
-  const cacheData = async (file, jsonData) => {
-    try {
-      await AsyncStorage.setItem(file, JSON.stringify(jsonData));
-    } catch (error) {
-      console.error('Error caching data:', error);
     }
   };
 
@@ -79,10 +40,10 @@ const FlashcardApp = () => {
   };
 
   // Shuffle data function
-  const shuffleData = (dataToShuffle) => {
-    for (let i = dataToShuffle.length - 1; i > 0; i--) {
+  const shuffleData = () => {
+    for (let i = data.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [dataToShuffle[i], dataToShuffle[j]] = [dataToShuffle[j], dataToShuffle[i]];
+      [data[i], data[j]] = [data[j], data[i]];
     }
   };
 
@@ -94,14 +55,12 @@ const FlashcardApp = () => {
     } else {
       setCurrentCardIndex(0);
       stopTimer();
-      // Fetch next page of data
-      setCurrentPage(currentPage + 1);
-      fetchData(`words_page_${currentPage + 1}.json`);
     }
   };
 
   // Start timer function
   const startTimer = () => {
+    setTimer(20); // Change timer to 20 seconds
     clearInterval(intervalId); // Clear previous interval
     const id = setInterval(() => {
       setTimer((prevTimer) => {
@@ -257,6 +216,7 @@ const FlashcardApp = () => {
         </View>
       </View>
       <View style={styles.flashcard}>
+        <Text style={styles.timer}>{timer > 9 ? `${timer}` : `${timer}`}</Text>
         <TouchableOpacity style={styles.card} onPress={toggleCard}>
           <Text style={styles.cardText}>{showCard()}</Text>
         </TouchableOpacity>
