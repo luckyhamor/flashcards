@@ -201,7 +201,6 @@
     { "question": "die Wand", "answer": "Wall" },
     { "question": "der Boden", "answer": "Floor" },
     { "question": "die Decke", "answer": "Ceiling" },
-    { "question": "die Lampe", "answer": "Lamp" },
     { "question": "der Schrank", "answer": "Cabinet" },
     { "question": "das Bett", "answer": "Bed" },
     { "question": "der Stuhl", "answer": "Chair" },
