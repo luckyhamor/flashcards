@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+        }
+
+        .button {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 40px;
+            width: 200px;
+            height: 100px;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: #fff;
+            background-color: #153448;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 10px; /* Add margin between buttons */
+        }
+
+        .button:hover {
+            background-color: #FF7D29;
+        }
+
+        /* Media query for smaller screens */
+        @media screen and (max-width: 600px) {
+            .button {
+                width: calc(50% - 20px); /* Make buttons 50% width with some margin */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="button-container">
+        <a href="flashcards.html" class="button">Flash Cards</a>
+        <a href="fillintheblank.html" class="button">Fill in the Blank</a>
+    </div>
+</body>
+
+</html>
