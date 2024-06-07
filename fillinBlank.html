@@ -228,6 +228,7 @@
         async function showCard(index) {
             const germanWordElement = document.getElementById('german-word');
             const englishTranslationElement = document.getElementById('english-translation');
+            const typingFeedbackElement = document.getElementById('typing-feedback'); // Get the typing feedback element
 
             if (data && data[index]) {
                 const isSentence = data[index].answer !== undefined; // Check if it's a sentence
@@ -238,15 +239,22 @@
                     const germanSentenceHTML = words.map(word => {
                         if (word.startsWith('___')) {
                             // Create text field with underscore style
-                            const textField = `<input type="text" class="masked-word" style="border: none; border-bottom: 2px solid #000; background: none; font-size: inherit; font-weight: bold; outline: none; width: ${word.length * 0.6}ch;">`;
+                            const textField = `<input type="text" class="masked-word" style="border: none; border-bottom: 2px solid #000; background: none; font-size: inherit; font-weight: bold; outline: none; width: 2ch;">`; // Set initial width to 2 characters
                             return textField;
                         } else {
                             return word;
                         }
                     }).join(' ');
                     germanWordElement.innerHTML = germanSentenceHTML;
-                    // Hide the "Check Answer" button for sentence cards
-                    toggleCheckAnswerButton(true);
+
+                    // Add event listeners to input fields to adjust their width dynamically and handle input
+                    const inputFields = document.querySelectorAll('.masked-word');
+                    inputFields.forEach(field => {
+                        field.addEventListener('input', function() {
+                            this.style.width = ((this.value.length + 1) * 0.6) + 'ch'; // Adjust width based on input length
+                            typingFeedbackElement.textContent = `Your Answer: ${this.value}`; // Update the typing feedback
+                        });
+                    });
                 } else {
                     // For words, replace the first 3 letters with underscores
                     const germanWord = data[index].german;
@@ -255,6 +263,7 @@
                     germanWordElement.innerHTML = `<span id="masked-word">${maskedWord}</span>${remainingPart}`;
                     // Show the "Check Answer" button for word cards
                     toggleCheckAnswerButton(false);
+                    typingFeedbackElement.textContent = ''; // Clear typing feedback for word cards
                 }
                 englishTranslationElement.innerText = `English: ${data[index].english}`;
             }
