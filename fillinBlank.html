@@ -285,7 +285,22 @@
         }
 
         function readCardContent() {
-            const germanText = document.getElementById('german-word').innerText;
+            const germanWordElement = document.getElementById('german-word');
+            const inputFields = document.querySelectorAll('.masked-word');
+            let germanText;
+
+            // Check if it's a sentence card (presence of input fields)
+            if (inputFields.length > 0) {
+                // For sentence cards, replace each underscore with the user input from text fields
+                germanText = data[currentCardIndex].german; // Get the original German sentence from the data
+                inputFields.forEach((field, index) => {
+                    germanText = germanText.replace(/___/, field.value);
+                });
+            } else {
+                // For word cards, directly get the input value from the German word element
+                germanText = germanWordElement.innerText;
+            }
+
             const textToRead = isGermanToEnglish ? germanText.replace(/^___/, '') : germanText; // Remove leading underscores
             // Create a new SpeechSynthesisUtterance instance
             const utterance = new SpeechSynthesisUtterance(textToRead);
