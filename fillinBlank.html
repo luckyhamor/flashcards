@@ -14,6 +14,31 @@
             font-family: Arial, sans-serif;
         }
 
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-category {
+            width: 150px;
+            height: 60px;
+            margin: 0 10px;
+            background-color: #153448;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            margin-top: 50px;
+        }
+
+        .btn-category:hover {
+            background-color: #1e5370;
+        }
+
         .flashcard-container {
             display: flex;
             flex-direction: column;
@@ -146,10 +171,6 @@
                 margin-top: auto;
                 margin-bottom: 20px;
             }
-
-            .read-btn {
-                bottom: 10px;
-            }
             .correct {
                 color: green;
             }
@@ -164,6 +185,11 @@
 
 <body>
 
+    <div class="button-container">
+        <button class="btn btn-category" onclick="loadData('words.json')">Words</button>
+        <button class="btn btn-category" onclick="loadData('sentenceFill.json')">Sentences</button>
+    </div>
+
     <div class="flashcard-container">
         <div class="flashcard">
             <div class="card-face">
@@ -173,11 +199,15 @@
             <button class="read-btn" onclick="readCardContent()">🔊</button>
         </div>
         <div class="feedback-container"></div> <!-- Add this container for feedback -->
-        <div class="btn-container">
+        <div class="btn-container" id="article-buttons">
+            <!-- Choice buttons for word cards -->
             <button class="btn btn-choice" id="die" onclick="checkAnswer('die')">die</button>
             <button class="btn btn-choice" id="der" onclick="checkAnswer('der')">der</button>
             <button class="btn btn-choice" id="das" onclick="checkAnswer('das')">das</button>
-        </div>        
+        </div>    
+        <div class="next-btn-container" id="check-answer-btn-container" style="display: none;">
+            <button class="btn next" onclick="checkSentenceAnswer()">Check Answer</button>
+        </div>
         <div class="next-btn-container">
             <button class="btn next" onclick="nextCard()">Next</button>
         </div>
@@ -200,11 +230,32 @@
             const englishTranslationElement = document.getElementById('english-translation');
 
             if (data && data[index]) {
-                const germanWord = data[index].german;
-                // Replace the first 3 letters with underscores
-                const maskedWord = germanWord.substr(0, 3).replace(/[^\s]/g, '_');
-                const remainingPart = germanWord.substr(3);
-                germanWordElement.innerHTML = `<span id="masked-word">${maskedWord}</span>${remainingPart}`;
+                const isSentence = data[index].answer !== undefined; // Check if it's a sentence
+                if (isSentence) {
+                    // Show the whole German sentence with text fields instead of underscores
+                    const germanSentence = data[index].german;
+                    const words = germanSentence.split(' '); // Split sentence into words
+                    const germanSentenceHTML = words.map(word => {
+                        if (word.startsWith('___')) {
+                            // Create text field with underscore style
+                            const textField = `<input type="text" class="masked-word" style="border: none; border-bottom: 2px solid #000; background: none; font-size: inherit; font-weight: bold; outline: none; width: ${word.length * 0.6}ch;">`;
+                            return textField;
+                        } else {
+                            return word;
+                        }
+                    }).join(' ');
+                    germanWordElement.innerHTML = germanSentenceHTML;
+                    // Hide the "Check Answer" button for sentence cards
+                    toggleCheckAnswerButton(true);
+                } else {
+                    // For words, replace the first 3 letters with underscores
+                    const germanWord = data[index].german;
+                    const maskedWord = germanWord.substr(0, 3).replace(/[^\s]/g, '_');
+                    const remainingPart = germanWord.substr(3);
+                    germanWordElement.innerHTML = `<span id="masked-word">${maskedWord}</span>${remainingPart}`;
+                    // Show the "Check Answer" button for word cards
+                    toggleCheckAnswerButton(false);
+                }
                 englishTranslationElement.innerText = `English: ${data[index].english}`;
             }
         }
@@ -215,6 +266,14 @@
                 currentCardIndex = 0; // Reset current card index
                 shuffleData(); // Shuffle the data array
                 showCard(currentCardIndex); // Show the first card when data is loaded
+                
+                // Toggle visibility of choice buttons based on file
+                const choiceButtonsContainer = document.getElementById('article-buttons');
+                if (file === 'sentenceFill.json') {
+                    choiceButtonsContainer.style.display = 'none'; // Hide choice buttons for sentences
+                } else {
+                    choiceButtonsContainer.style.display = 'flex'; // Show choice buttons for words
+                }
             }
         }
 
@@ -310,6 +369,70 @@
             nextButtonClicked = true;
             nextCard();
         }
+
+        // Function to toggle the visibility of the "Check Answer" button
+        function toggleCheckAnswerButton(isVisible) {
+            const checkAnswerBtnContainer = document.getElementById('check-answer-btn-container');
+            checkAnswerBtnContainer.style.display = isVisible ? 'block' : 'none';
+        }
+
+        // Function to check the sentence answer
+        function checkSentenceAnswer() {
+            const germanSentence = data[currentCardIndex].german;
+            const answer = data[currentCardIndex].answer;
+            const inputFields = document.querySelectorAll('.masked-word');
+            let userInput = '';
+            inputFields.forEach(field => {
+                userInput += field.value + ' ';
+                field.style.color = 'black'; // Reset text color
+            });
+            userInput = userInput.trim();
+            const isCorrect = userInput.toLowerCase() === answer.toLowerCase();
+            const feedbackContainer = document.querySelector('.feedback-container');
+            const feedback = document.createElement('div');
+            feedback.style.fontWeight = 'bold'; // Set font weight to bold
+            if (isCorrect) {
+                feedback.innerText = "Correct!";
+                feedback.style.color = '#39FF14'; // Set font color to green for correct answer
+            } else {
+                feedback.innerHTML = `Incorrect! : Correct answer is <strong>${answer}</strong>`;
+                feedback.style.color = 'red'; // Set font color to red for incorrect answer
+            }
+            feedbackContainer.innerHTML = ''; // Clear previous feedback
+            feedbackContainer.appendChild(feedback);
+
+            // Display user input in the text fields
+            const words = germanSentence.split(' ');
+            const userInputWords = userInput.split(' ');
+            inputFields.forEach((field, index) => {
+                field.value = userInputWords[index] || ''; // Display user input or leave empty if not provided
+                if (userInputWords[index]) {
+                    if (userInputWords[index].toLowerCase() !== answer.split(' ')[index].toLowerCase()) {
+                        field.style.color = 'red'; // Change text color to red for incorrect input
+                    } else {
+                        field.style.color = 'green'; // Change text color to green for correct input
+                    }
+                }
+            });
+
+            // Disable all input fields after checking answer
+            inputFields.forEach(field => {
+                field.disabled = true;
+            });
+
+            // Disable the "Next" button
+            const nextButton = document.querySelector('.btn.next');
+            nextButton.disabled = true;
+
+            // Automatically move to the next card after 5 seconds
+            setTimeout(() => {
+                if (!nextButtonClicked) {
+                    nextCard();
+                }
+            }, 5000);
+        }
+
+
 
         // Load initial data (Words level)
         loadData('words.json');
