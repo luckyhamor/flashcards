@@ -167,8 +167,8 @@
     <div class="flashcard-container">
         <div class="flashcard">
             <div class="card-face">
-                <h2 id="question">Loading...</h2>
-                <h5 id="answer"></h5>
+                <h2 id="german-word">Loading...</h2>
+                <h5 id="english-translation"></h5>
             </div>
             <button class="read-btn" onclick="readCardContent()">🔊</button>
         </div>
@@ -196,16 +196,16 @@
         }
 
         async function showCard(index) {
-            const question = document.getElementById('question');
-            const answer = document.getElementById('answer');
+            const germanWordElement = document.getElementById('german-word');
+            const englishTranslationElement = document.getElementById('english-translation');
 
             if (data && data[index]) {
-                const germanWord = data[index].question;
+                const germanWord = data[index].german;
                 // Replace the first 3 letters with underscores
                 const maskedWord = germanWord.substr(0, 3).replace(/[^\s]/g, '_');
                 const remainingPart = germanWord.substr(3);
-                question.innerHTML = `<span id="masked-word">${maskedWord}</span>${remainingPart}`;
-                answer.innerText = `English: ${data[index].answer}`;
+                germanWordElement.innerHTML = `<span id="masked-word">${maskedWord}</span>${remainingPart}`;
+                englishTranslationElement.innerText = `English: ${data[index].english}`;
             }
         }
 
@@ -226,8 +226,8 @@
         }
 
         function readCardContent() {
-            const questionText = document.getElementById('question').innerText;
-            const textToRead = isGermanToEnglish ? questionText.replace(/^___/, '') : questionText; // Remove leading underscores
+            const germanText = document.getElementById('german-word').innerText;
+            const textToRead = isGermanToEnglish ? germanText.replace(/^___/, '') : germanText; // Remove leading underscores
             // Create a new SpeechSynthesisUtterance instance
             const utterance = new SpeechSynthesisUtterance(textToRead);
             utterance.lang = 'de-DE'; // Set language to German
@@ -237,7 +237,7 @@
         }
 
         function checkAnswer(article) {
-            const germanWord = data[currentCardIndex].question;
+            const germanWord = data[currentCardIndex].german;
             const originalLetters = germanWord.substr(0, 3).toLowerCase();
             const isCorrect = article === originalLetters;
             const resultText = isCorrect ? "Correct!" : "Incorrect!";
@@ -300,8 +300,8 @@
                 showCard(currentCardIndex);
             } else {
                 // All cards have been shown, display "GOOD JOB!" message
-                const question = document.getElementById('question');
-                question.innerText = "GOOD JOB!";
+                const germanWordElement = document.getElementById('german-word');
+                germanWordElement.innerText = "GOOD JOB!";
             }
         }
 
