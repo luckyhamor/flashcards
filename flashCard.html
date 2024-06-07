@@ -194,10 +194,9 @@
 
     <div class="flashcard-container">
         <div class="btn-container">
-            <button class="btn" onclick="loadData('words.json', event)" id="level1">Level 1</button>
-            <button class="btn" onclick="loadData('phrases.json', event)" id="level2">Level 2</button>
-            <button class="btn" onclick="loadData('sentence.json', event)" id="level3">Level 3</button>
-            <button class="btn" onclick="loadData('conversation.json', event)" id="level4">Level 4</button>
+            <button class="btn" onclick="loadData('words.json', event)" id="words">GENDERS</button>
+            <button class="btn" onclick="loadData('verbs.json', event)" id="verbs">VERBS</button>
+            <button class="btn" onclick="loadData('phrases.json', event)" id="phrases">PHRASES</button>
         </div>
         <div class="flashcard">
             <div class="timer">30</div>
@@ -332,10 +331,10 @@
         }
 
         // Load initial data (Words level)
-        loadData('words.json', document.getElementById('level1'));
+        loadData('words.json', document.getElementById('words'));
 
         // Apply clicked effect on the default (Words) level button
-        document.getElementById('level1').click();
+        document.getElementById('words').click();
     </script>
 
 </body>
