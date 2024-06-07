@@ -226,39 +226,52 @@
         }
 
         async function showCard(index) {
-            const germanWordElement = document.getElementById('german-word');
-            const englishTranslationElement = document.getElementById('english-translation');
+    const germanWordElement = document.getElementById('german-word');
+    const englishTranslationElement = document.getElementById('english-translation');
 
-            if (data && data[index]) {
-                const isSentence = data[index].answer !== undefined; // Check if it's a sentence
-                if (isSentence) {
-                    // Show the whole German sentence with text fields instead of underscores
-                    const germanSentence = data[index].german;
-                    const words = germanSentence.split(' '); // Split sentence into words
-                    const germanSentenceHTML = words.map(word => {
-                        if (word.startsWith('___')) {
-                            // Create text field with underscore style
-                            const textField = `<input type="text" class="masked-word" style="border: none; border-bottom: 2px solid #000; background: none; font-size: inherit; font-weight: bold; outline: none; width: ${word.length * 0.6}ch;">`;
-                            return textField;
-                        } else {
-                            return word;
-                        }
-                    }).join(' ');
-                    germanWordElement.innerHTML = germanSentenceHTML;
-                    // Hide the "Check Answer" button for sentence cards
-                    toggleCheckAnswerButton(true);
+    if (data && data[index]) {
+        const isSentence = data[index].answer !== undefined; // Check if it's a sentence
+        if (isSentence) {
+            // Show the whole German sentence with text fields instead of underscores
+            const germanSentence = data[index].german;
+            const words = germanSentence.split(' '); // Split sentence into words
+            const germanSentenceHTML = words.map(word => {
+                if (word.startsWith('___')) {
+                    // Create text field with underscore style
+                    const textField = `<input type="text" class="masked-word" style="border: none; border-bottom: 2px solid #000; background: none; font-size: inherit; font-weight: bold; outline: none; width: ${word.length * 0.6}ch;">`;
+                    return textField;
                 } else {
-                    // For words, replace the first 3 letters with underscores
-                    const germanWord = data[index].german;
-                    const maskedWord = germanWord.substr(0, 3).replace(/[^\s]/g, '_');
-                    const remainingPart = germanWord.substr(3);
-                    germanWordElement.innerHTML = `<span id="masked-word">${maskedWord}</span>${remainingPart}`;
-                    // Show the "Check Answer" button for word cards
-                    toggleCheckAnswerButton(false);
+                    return word;
                 }
-                englishTranslationElement.innerText = `English: ${data[index].english}`;
-            }
+            }).join(' ');
+            germanWordElement.innerHTML = germanSentenceHTML;
+
+            // Add event listener to each text field to dynamically adjust its width
+            const inputFields = document.querySelectorAll('.masked-word');
+            inputFields.forEach(field => {
+                field.addEventListener('input', () => {
+                    // Calculate width based on the length of the input text
+                    const textWidth = field.value.length * 10; // You can adjust the multiplier as needed
+                    // Set the width of the text field
+                    field.style.width = `${textWidth}px`;
+                });
+            });
+
+            // Hide the "Check Answer" button for sentence cards
+            toggleCheckAnswerButton(true);
+        } else {
+            // For words, replace the first 3 letters with underscores
+            const germanWord = data[index].german;
+            const maskedWord = germanWord.substr(0, 3).replace(/[^\s]/g, '_');
+            const remainingPart = germanWord.substr(3);
+            germanWordElement.innerHTML = `<span id="masked-word">${maskedWord}</span>${remainingPart}`;
+            // Show the "Check Answer" button for word cards
+            toggleCheckAnswerButton(false);
         }
+        englishTranslationElement.innerText = `English: ${data[index].english}`;
+    }
+}
+
 
         async function loadData(file) {
             data = await fetchData(file);
