@@ -226,51 +226,53 @@
         }
 
         async function showCard(index) {
-    const germanWordElement = document.getElementById('german-word');
-    const englishTranslationElement = document.getElementById('english-translation');
+            const germanWordElement = document.getElementById('german-word');
+            const englishTranslationElement = document.getElementById('english-translation');
 
-    if (data && data[index]) {
-        const isSentence = data[index].answer !== undefined; // Check if it's a sentence
-        if (isSentence) {
-            // Show the whole German sentence with text fields instead of underscores
-            const germanSentence = data[index].german;
-            const words = germanSentence.split(' '); // Split sentence into words
-            const germanSentenceHTML = words.map(word => {
-                if (word.startsWith('___')) {
-                    // Create text field with underscore style
-                    const textField = `<input type="text" class="masked-word" style="border: none; border-bottom: 2px solid #000; background: none; font-size: inherit; font-weight: bold; outline: none; width: ${word.length * 0.6}ch;">`;
-                    return textField;
+            if (data && data[index]) {
+                const isSentence = data[index].answer !== undefined; // Check if it's a sentence
+                if (isSentence) {
+                    // Show the whole German sentence with text fields instead of underscores
+                    const germanSentence = data[index].german;
+                    const words = germanSentence.split(' '); // Split sentence into words
+                    const germanSentenceHTML = words.map(word => {
+                        if (word.startsWith('___')) {
+                            // Create text field with underscore style
+                            const textField = `<input type="text" class="masked-word" style="border: none; border-bottom: 2px solid #000; background: none; font-size: inherit; font-weight: bold; outline: none; width: ${word.length * 0.6}ch;">`;
+                            return textField;
+                        } else {
+                            return word;
+                        }
+                    }).join(' ');
+                    germanWordElement.innerHTML = germanSentenceHTML;
+
+                    // Add event listener to each text field to dynamically adjust its width
+                    const inputFields = document.querySelectorAll('.masked-word');
+                    inputFields.forEach(field => {
+                        field.addEventListener('input', () => {
+                            // Calculate width based on the length of the input text
+                            const textWidth = field.scrollWidth; // Use scrollWidth to get the entire content width
+                            const maxWidth = field.parentNode.clientWidth; // Get the width of the parent container
+                            const adjustedWidth = Math.min(textWidth, maxWidth); // Set the width to the minimum of text width and container width
+                            // Set the width of the text field
+                            field.style.width = `${adjustedWidth}px`;
+                        });
+                    });
+
+                    // Hide the "Check Answer" button for sentence cards
+                    toggleCheckAnswerButton(true);
                 } else {
-                    return word;
+                    // For words, replace the first 3 letters with underscores
+                    const germanWord = data[index].german;
+                    const maskedWord = germanWord.substr(0, 3).replace(/[^\s]/g, '_');
+                    const remainingPart = germanWord.substr(3);
+                    germanWordElement.innerHTML = `<span id="masked-word">${maskedWord}</span>${remainingPart}`;
+                    // Show the "Check Answer" button for word cards
+                    toggleCheckAnswerButton(false);
                 }
-            }).join(' ');
-            germanWordElement.innerHTML = germanSentenceHTML;
-
-            // Add event listener to each text field to dynamically adjust its width
-            const inputFields = document.querySelectorAll('.masked-word');
-            inputFields.forEach(field => {
-                field.addEventListener('input', () => {
-                    // Calculate width based on the length of the input text
-                    const textWidth = field.value.length * 10; // You can adjust the multiplier as needed
-                    // Set the width of the text field
-                    field.style.width = `${textWidth}px`;
-                });
-            });
-
-            // Hide the "Check Answer" button for sentence cards
-            toggleCheckAnswerButton(true);
-        } else {
-            // For words, replace the first 3 letters with underscores
-            const germanWord = data[index].german;
-            const maskedWord = germanWord.substr(0, 3).replace(/[^\s]/g, '_');
-            const remainingPart = germanWord.substr(3);
-            germanWordElement.innerHTML = `<span id="masked-word">${maskedWord}</span>${remainingPart}`;
-            // Show the "Check Answer" button for word cards
-            toggleCheckAnswerButton(false);
+                englishTranslationElement.innerText = `English: ${data[index].english}`;
+            }
         }
-        englishTranslationElement.innerText = `English: ${data[index].english}`;
-    }
-}
 
 
         async function loadData(file) {
@@ -410,12 +412,18 @@
             const answer = data[currentCardIndex].answer;
             const inputFields = document.querySelectorAll('.masked-word');
             let userInput = '';
+            let isCorrect = true; // Assume correct initially
             inputFields.forEach(field => {
-                userInput += field.value + ' ';
-                field.style.color = 'black'; // Reset text color
+                userInput += field.value.trim() + ' '; // Concatenate user input from all fields
+                // Compare user input with answer
+                if (field.value.trim().toLowerCase() !== answer.toLowerCase()) {
+                    isCorrect = false; // Update correctness flag
+                    field.style.color = 'red'; // Set font color to red for incorrect input
+                } else {
+                    field.style.color = 'green'; // Set font color to green for correct input
+                }
             });
             userInput = userInput.trim();
-            const isCorrect = userInput.toLowerCase() === answer.toLowerCase();
             const feedbackContainer = document.querySelector('.feedback-container');
             const feedback = document.createElement('div');
             feedback.style.fontWeight = 'bold'; // Set font weight to bold
@@ -423,34 +431,11 @@
                 feedback.innerText = "Correct!";
                 feedback.style.color = '#39FF14'; // Set font color to green for correct answer
             } else {
-                feedback.innerHTML = `Incorrect! : Correct answer is <strong>${answer}</strong>`;
+                feedback.innerHTML = `Incorrect! : <span style="color: white;">Correct answer is <u><strong>${answer}</strong></u></span>`;
                 feedback.style.color = 'red'; // Set font color to red for incorrect answer
             }
             feedbackContainer.innerHTML = ''; // Clear previous feedback
             feedbackContainer.appendChild(feedback);
-
-            // Display user input in the text fields
-            const words = germanSentence.split(' ');
-            const userInputWords = userInput.split(' ');
-            inputFields.forEach((field, index) => {
-                field.value = userInputWords[index] || ''; // Display user input or leave empty if not provided
-                if (userInputWords[index]) {
-                    if (userInputWords[index].toLowerCase() !== answer.split(' ')[index].toLowerCase()) {
-                        field.style.color = 'red'; // Change text color to red for incorrect input
-                    } else {
-                        field.style.color = 'green'; // Change text color to green for correct input
-                    }
-                }
-            });
-
-            // Disable all input fields after checking answer
-            inputFields.forEach(field => {
-                field.disabled = true;
-            });
-
-            // Disable the "Next" button
-            const nextButton = document.querySelector('.btn.next');
-            nextButton.disabled = true;
 
             // Automatically move to the next card after 5 seconds
             setTimeout(() => {
@@ -459,8 +444,6 @@
                 }
             }, 5000);
         }
-
-
 
         // Load initial data (Words level)
         loadData('words.json');
