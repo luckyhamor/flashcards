@@ -275,7 +275,13 @@
         }
 
 
+        async function clearFeedback() {
+            const feedbackContainer = document.querySelector('.feedback-container');
+            feedbackContainer.innerHTML = ''; // Clear feedback container
+        }
+
         async function loadData(file) {
+            await clearFeedback(); // Clear feedback when loading new data
             data = await fetchData(file);
             if (data) {
                 currentCardIndex = 0; // Reset current card index
@@ -290,6 +296,13 @@
                     choiceButtonsContainer.style.display = 'flex'; // Show choice buttons for words
                 }
             }
+            // Enable all choice buttons for the next card
+            const choiceButtons = document.querySelectorAll('.btn-choice');
+            choiceButtons.forEach(button => {
+                button.disabled = false;
+                button.classList.remove('disabled-hover');
+                button.classList.remove('disabled-pointer');
+            });
         }
 
         function shuffleData() {
