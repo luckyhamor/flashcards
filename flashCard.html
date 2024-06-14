@@ -328,6 +328,11 @@
         function toggleCard() {
             const card = document.querySelector('.card');
             card.style.transform = card.style.transform === 'rotateY(180deg)' ? 'rotateY(0deg)' : 'rotateY(180deg)';
+            
+            // Automatically flip the card back after 3 seconds
+            setTimeout(() => {
+                card.style.transform = card.style.transform === 'rotateY(180deg)' ? 'rotateY(0deg)' : 'rotateY(180deg)';
+            }, 3000);
         }
 
         // Load initial data (Words level)
