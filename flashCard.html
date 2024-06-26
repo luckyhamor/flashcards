@@ -263,17 +263,47 @@
         }
 
         function nextCard() {
-            currentCardIndex++;
-            if (currentCardIndex < data.length) {
-                showCard(currentCardIndex);
-                startTimer(); // Start the timer again
+            const card = document.querySelector('.card');
+            
+            // Check if the card is currently flipped to the back (German side)
+            const isFlipped = card.style.transform === 'rotateY(180deg)';
+
+            // If the card is flipped (showing German side), delay and then flip back to front
+            if (isFlipped) {
+                setTimeout(() => {
+                    card.style.transform = 'rotateY(0deg)';
+                    
+                    // Delay showing the next card's content after flipping back to front
+                    setTimeout(() => {
+                        showNextCard();
+                    }, 500); // Adjust this delay as needed
+                }, 1000); // Delay 1 second (1000 milliseconds) before flipping back to front
             } else {
-                // All cards have been shown, display "GOOD JOB!" message
-                const english = document.getElementById('english');
-                english.innerText = "GOOD JOB!";
-                const german = document.getElementById('german');
-                german.innerText = "";
-                stopTimer(); // Stop the timer
+                // If not flipped (already on front side), immediately show the next card's content
+                showNextCard();
+            }
+
+            // Function to show the next card's content
+            function showNextCard() {
+                // Move to the next card index
+                currentCardIndex++;
+
+                // Check if there are remaining cards to show
+                if (currentCardIndex < data.length) {
+                    showCard(currentCardIndex); // Show the next card content
+
+                    // Start the timer again (if needed)
+                    startTimer();
+                } else {
+                    // All cards have been shown, display "GOOD JOB!" message or handle end of cards
+                    const english = document.getElementById('english');
+                    english.innerText = "GOOD JOB!";
+                    const german = document.getElementById('german');
+                    german.innerText = "";
+
+                    // Stop the timer (if needed)
+                    stopTimer();
+                }
             }
         }
 
@@ -328,11 +358,6 @@
         function toggleCard() {
             const card = document.querySelector('.card');
             card.style.transform = card.style.transform === 'rotateY(180deg)' ? 'rotateY(0deg)' : 'rotateY(180deg)';
-            
-            // Automatically flip the card back after 3 seconds
-            setTimeout(() => {
-                card.style.transform = card.style.transform === 'rotateY(180deg)' ? 'rotateY(0deg)' : 'rotateY(180deg)';
-            }, 3000);
         }
 
         // Load initial data (Words level)
