@@ -202,14 +202,14 @@
             <div class="timer">30</div>
             <div class="card" onclick="toggleCard()">
                 <div class="card-face card-front">
-                    <h2 id="english">Loading...</h2> 
+                    <h2 id="english">Loading...</h2>
                 </div>
                 <div class="card-face card-back">
                     <h2 id="german">Loading...</h2>
+                    <button class="read-btn" onclick="readCardContent()">🔊</button>
                 </div>
             </div>
-            <button class="read-btn" onclick="readCardContent()">🔊</button>
-        </div>
+        </div>        
         <div class="next-btn-container">
             <button class="btn next" onclick="nextCard()">Next</button>
         </div>
@@ -332,14 +332,6 @@
             timerDisplay.textContent = "30"; // Reset the timer display
         }
 
-        function readFrontCard() {
-            const englishText = document.getElementById('english').innerText;
-            const utterance = new SpeechSynthesisUtterance(englishText);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.9;
-            window.speechSynthesis.speak(utterance);
-        }
-
         function readBackCard() {
             const germanText = document.getElementById('german').innerText;
             const utterance = new SpeechSynthesisUtterance(germanText);
@@ -349,15 +341,45 @@
         }
 
         function readCardContent() {
+            const card = document.querySelector('.card');
+            const readButton = document.querySelector('.read-btn');
+
+            // Disable card flipping during reading
+            card.style.pointerEvents = 'none';
+
             if (isGermanToEnglish) {
-                document.querySelector('.card').style.transform === 'rotateY(0deg)' ? readFrontCard() : readBackCard();
+                // Read front card (English)
+                if (card.style.transform === 'rotateY(0deg)') {
+                    readFrontCard();
+                } else {
+                    // If the card is already flipped to back, read German text
+                    readBackCard();
+                }
             } else {
-                document.querySelector('.card').style.transform === 'rotateY(0deg)' ? readBackCard() : readFrontCard();
+                // Read back card (German)
+                if (card.style.transform === 'rotateY(0deg)') {
+                    readBackCard();
+                } else {
+                    // If the card is already flipped to back, read English text
+                    readFrontCard();
+                }
             }
+
+            // Ensure the card stays on the back side after reading (even if it's already flipped)
+            setTimeout(() => {
+                card.style.transform = 'rotateY(180deg)';
+                card.style.pointerEvents = 'auto'; // Re-enable card interaction after reading is complete
+            }, 500); // Adjust this timeout as needed based on your reading length and transition duration
         }
+
         function toggleCard() {
             const card = document.querySelector('.card');
-            card.style.transform = card.style.transform === 'rotateY(180deg)' ? 'rotateY(0deg)' : 'rotateY(180deg)';
+            const readButton = document.querySelector('.read-btn');
+
+            // Disable card flipping while read button is active
+            if (readButton !== event.target) {
+                card.style.transform = card.style.transform === 'rotateY(180deg)' ? 'rotateY(0deg)' : 'rotateY(180deg)';
+            }
         }
 
         // Load initial data (Words level)
